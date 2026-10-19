@@ -1,21 +1,74 @@
 // use prisma-8
 
+// ১. ইউজার মডেল
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String?
-  name      String?
-  posts     Post[]
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+  id           Int      @id @default(autoincrement())
+  fullName     String   @map("full_name")
+  companyName  String?  @map("company_name")
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("users")
 }
 
-model Post {
+// ২. কাস্টমার মডেল
+model Customer {
+  id        Int        @id @default(autoincrement())
+  name      String
+  email     String?
+  phone     String?
+  status    String     @default("Active")
+  createdAt DateTime   @default(now()) @map("created_at")
+  
+  // রিলেশন: এক কাস্টমারের একাধিক ইনভয়েস থাকতে পারে
+  invoices  Invoice[]  
+
+  @@map("customers")
+}
+
+// ৩. প্রোডাক্ট/ইনভেন্টরি মডেল
+model Product {
   id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+  name      String
+  sku       String   @unique
+  category  String?
+  price     Numeric(10, 2)
+  stock     Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("products")
+}
+
+// ৪. ট্রানজেকশন (আয়-ব্যয়) মডেল
+model Transaction {
+  id          Int            @id @default(autoincrement())
+  type        TransactionType
+  category    String?
+  amount      Numeric(10, 2)
+  description String?
+  createdAt   DateTime       @default(now()) @map("created_at")
+
+  @@map("transactions")
+}
+
+// ৫. ইনভয়েস মডেল
+model Invoice {
+  id          Int      @id @default(autoincrement())
+  invoiceNo   String   @unique @map("invoice_no")
+  customerId  Int      @map("customer_id")
+  totalAmount Numeric(10, 2) @map("total_amount")
+  status      String   @default("Pending")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // রিলেশন: ইনভয়েসটি কোন কাস্টমারের?
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@map("invoices")
+}
+
+// Enums (নিরাপদ ডাটা টাইপের জন্য)
+enum TransactionType {
+  INCOME
+  EXPENSE
 }
