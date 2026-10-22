@@ -98,6 +98,28 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+const logoutUser = catchAsync(async (req: Request, res: Response) => {
+	// 🛠️ ব্রাউজার থেকে কুকি দুটি ডিলিট করা হচ্ছে
+	res.clearCookie("accessToken", {
+		httpOnly: true,
+		secure: false, // প্রোডাকশনে true করে দেবেন
+		sameSite: "none",
+	});
+	
+	res.clearCookie("refreshToken", {
+		httpOnly: true,
+		secure: false,
+		sameSite: "none",
+	});
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "User logged out successfully",
+		data: null,
+	});
+});
+
 const refreshToken = catchAsync(async (req: Request, res: Response) => {
 	if (!req.cookies.refreshToken) {
 		throw new AppError(httpStatus.UNAUTHORIZED, "Refresh token is missing");
@@ -160,6 +182,7 @@ export const AuthController = {
 	verifyEmail,
 	loginUser,
 	getMe,
+	logoutUser,
 	refreshToken,
 	forgotPassword,
 	resetPassword,

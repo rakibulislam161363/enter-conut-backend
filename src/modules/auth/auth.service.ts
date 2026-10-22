@@ -220,6 +220,10 @@ const getMe = async (user: IRequestUser) => {
 	return isUserExists;
 };
 
+const logoutUser = async () => {
+	return { message: "Logged out successfully" };
+};
+
 const refreshToken = async (token: string) => {
 	const verifiedRefreshToken = jwtUtils.verifyToken(
 		token,
@@ -379,6 +383,7 @@ export const AuthService = {
 	register,
 	verifyEmail,
 	loginUser,
+	logoutUser,
 	getMe,
 	refreshToken,
 	forgotPassword,
