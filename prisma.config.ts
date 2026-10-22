@@ -11,7 +11,7 @@ export default definePrismaConfig({
   orm: ormConfig({
     contract: "./src/prisma/contract.prisma",
     db: {
-      connection: process.env.DATABASE_URL!,
+      connection: "postgres://f014d11cd4839fdcf0fc99a60555e685a4f06cecf2e4115d40fcf499cb3324dc:sk_oB-Lr06_smLVfdLdkrD11@pooled.db.prisma.io:5432/postgres?sslmode=require",
     },
   }),
   composer: composer({

@@ -1,16 +1,17 @@
 // use prisma-8
-
-// ১. ইউজার মডেল
 model User {
-  id           Int      @id @default(autoincrement())
-  fullName     String   @map("full_name")
-  companyName  String?  @map("company_name")
-  email        String   @unique
-  passwordHash String   @map("password_hash")
-  createdAt    DateTime @default(now()) @map("created_at")
+  id           Int        @id @default(autoincrement())
+  fullName     String     @map("full_name")
+  companyName  String?    @map("company_name")
+  email        String     @unique
+  passwordHash String     @map("password_hash")
+  role         Role       @default(USER)
+  status       UserStatus @default(ACTIVE)
+  createdAt    DateTime   @default(now()) @map("created_at")
 
   @@map("users")
 }
+
 
 // ২. কাস্টমার মডেল
 model Customer {
@@ -71,4 +72,15 @@ model Invoice {
 enum TransactionType {
   INCOME
   EXPENSE
+}
+
+// ১. ইউজার মডেল
+enum Role {
+  ADMIN
+  USER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
 }

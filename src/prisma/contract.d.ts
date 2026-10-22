@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'cab1462156e2320c91d1a82ef70c87652d359f23df019c208e12865a5a71a4b9'>;
+  StorageHashBase<'aa5c71db5eb3362e1aed95dee1dc9f8ce5c4f15a8af236333abc0023372d2b23'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
@@ -273,6 +273,8 @@ export type FieldOutputTypes = {
       readonly fullName: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly passwordHash: CodecTypes['pg/text@1']['output'];
+      readonly role: 'ADMIN' | 'USER';
+      readonly status: 'ACTIVE' | 'INACTIVE';
     };
   };
 };
@@ -318,6 +320,8 @@ export type FieldInputTypes = {
       readonly fullName: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly passwordHash: CodecTypes['pg/text@1']['input'];
+      readonly role: 'ADMIN' | 'USER';
+      readonly status: 'ACTIVE' | 'INACTIVE';
     };
   };
 };
@@ -363,6 +367,8 @@ export type StorageColumnTypes = {
       readonly full_name: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly password_hash: CodecTypes['pg/text@1']['output'];
+      readonly role: 'ADMIN' | 'USER';
+      readonly status: 'ACTIVE' | 'INACTIVE';
     };
   };
 };
@@ -408,6 +414,8 @@ export type StorageColumnInputTypes = {
       readonly full_name: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly password_hash: CodecTypes['pg/text@1']['input'];
+      readonly role: 'ADMIN' | 'USER';
+      readonly status: 'ACTIVE' | 'INACTIVE';
     };
   };
 };
@@ -459,6 +467,8 @@ export namespace Models {
     fullName: CodecTypes['pg/text@1']['output'];
     id: CodecTypes['pg/int4@1']['output'];
     passwordHash: CodecTypes['pg/text@1']['output'];
+    role: 'ADMIN' | 'USER';
+    status: 'ACTIVE' | 'INACTIVE';
     readonly [RelationKeys]?: never;
   };
 }
@@ -771,6 +781,26 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly role: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'USER'>;
+                  };
+                  readonly many: false;
+                };
+                readonly status: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'ACTIVE'>;
+                  };
+                  readonly many: false;
+                };
               };
               primaryKey: { readonly columns: readonly ['id'] };
               uniques: readonly [{ readonly columns: readonly ['email'] }];
@@ -779,9 +809,17 @@ type ContractBase = Omit<
             };
           };
           readonly valueSet: {
+            readonly Role: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['ADMIN', 'USER'];
+            };
             readonly TransactionType: {
               readonly kind: 'valueSet';
               readonly values: readonly ['INCOME', 'EXPENSE'];
+            };
+            readonly UserStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['ACTIVE', 'INACTIVE'];
             };
           };
         };
@@ -1054,6 +1092,14 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly role: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
             };
             readonly relations: Record<string, never>;
             readonly storage: {
@@ -1066,16 +1112,32 @@ type ContractBase = Omit<
                 readonly fullName: { readonly column: 'full_name' };
                 readonly id: { readonly column: 'id' };
                 readonly passwordHash: { readonly column: 'password_hash' };
+                readonly role: { readonly column: 'role' };
+                readonly status: { readonly column: 'status' };
               };
             };
           };
         };
         readonly enum: {
+          readonly Role: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'ADMIN'; readonly value: 'ADMIN' },
+              { readonly name: 'USER'; readonly value: 'USER' },
+            ];
+          };
           readonly TransactionType: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
               { readonly name: 'INCOME'; readonly value: 'INCOME' },
               { readonly name: 'EXPENSE'; readonly value: 'EXPENSE' },
+            ];
+          };
+          readonly UserStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'ACTIVE'; readonly value: 'ACTIVE' },
+              { readonly name: 'INACTIVE'; readonly value: 'INACTIVE' },
             ];
           };
         };

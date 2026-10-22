@@ -29,6 +29,19 @@
     "namespaces": {
       "public": {
         "enum": {
+          "Role": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "ADMIN",
+                "value": "ADMIN"
+              },
+              {
+                "name": "USER",
+                "value": "USER"
+              }
+            ]
+          },
           "TransactionType": {
             "codecId": "pg/text@1",
             "members": [
@@ -39,6 +52,19 @@
               {
                 "name": "EXPENSE",
                 "value": "EXPENSE"
+              }
+            ]
+          },
+          "UserStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "ACTIVE",
+                "value": "ACTIVE"
+              },
+              {
+                "name": "INACTIVE",
+                "value": "INACTIVE"
               }
             ]
           }
@@ -432,6 +458,32 @@
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
+              },
+              "role": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "Role",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "UserStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
               }
             },
             "relations": {},
@@ -454,6 +506,12 @@
                 },
                 "passwordHash": {
                   "column": "password_hash"
+                },
+                "role": {
+                  "column": "role"
+                },
+                "status": {
+                  "column": "status"
                 }
               },
               "namespaceId": "public",
@@ -751,6 +809,18 @@
               "uniques": []
             },
             "users": {
+              "checks": [
+                {
+                  "expression": "\"role\" IN ('ADMIN', 'USER')",
+                  "name": "users_role_check_5b1978b5",
+                  "prefix": "users_role_check"
+                },
+                {
+                  "expression": "\"status\" IN ('ACTIVE', 'INACTIVE')",
+                  "name": "users_status_check_ee520df2",
+                  "prefix": "users_status_check"
+                }
+              ],
               "columns": {
                 "company_name": {
                   "codecId": "pg/text@1",
@@ -789,6 +859,36 @@
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": false
+                },
+                "role": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "USER"
+                  },
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "Role",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "ACTIVE"
+                  },
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "UserStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 }
               },
               "foreignKeys": [],
@@ -808,11 +908,25 @@
             }
           },
           "valueSet": {
+            "Role": {
+              "kind": "valueSet",
+              "values": [
+                "ADMIN",
+                "USER"
+              ]
+            },
             "TransactionType": {
               "kind": "valueSet",
               "values": [
                 "INCOME",
                 "EXPENSE"
+              ]
+            },
+            "UserStatus": {
+              "kind": "valueSet",
+              "values": [
+                "ACTIVE",
+                "INACTIVE"
               ]
             }
           }
@@ -821,7 +935,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "cab1462156e2320c91d1a82ef70c87652d359f23df019c208e12865a5a71a4b9"
+    "storageHash": "aa5c71db5eb3362e1aed95dee1dc9f8ce5c4f15a8af236333abc0023372d2b23"
   },
   "capabilities": {
     "postgres": {

@@ -1,15 +1,15 @@
 import app from "./app";
 import config from "./config";
 import "dotenv/config";
-import { db } from "./prisma/db";
+import { redisClient } from "./lib/redis";
+import { transporter } from "./lib/nodemailer";
 
 const PORT = config.port;
 
 async function main() {
   try {
-    await db.orm.public.User.first(); 
-    console.log("Connected to the database successfully.");
-
+    await redisClient.connect();
+    await transporter.verify();
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
