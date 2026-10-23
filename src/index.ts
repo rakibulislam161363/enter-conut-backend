@@ -1,6 +1,5 @@
 import app from "./app";
 import config from "./config";
-import "dotenv/config";
 import { redisClient } from "./lib/redis";
 import { transporter } from "./lib/nodemailer";
 

@@ -7,7 +7,7 @@
     "node": "^22.18.0 || ^24.11.0 || >=26.0.0"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsup",
     "composer:deploy": "prisma deploy module.ts",
     "composer:dev": "prisma dev module.ts",
     "contract:emit": "prisma contract emit",
@@ -15,17 +15,19 @@
     "db:update": "prisma db update",
     "db:verify": "prisma db verify",
     "deploy": "npm run build && npm run composer:deploy",
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch --env-file=.env src/index.ts",
     "dev:composer": "npm run build && npm run composer:dev",
     "migrate": "prisma db migrate",
     "migration:plan": "prisma migration plan",
     "migration:show": "prisma migration show",
     "migration:status": "prisma migration status",
     "skills:sync": "prisma skills sync || exit 0",
-    "start": "node dist/server.mjs",
+      "start": "node --env-file=.env dist/index.js",
     "postinstall": "prisma skills sync || exit 0"
   },
   "dependencies": {
+    "@google/genai": "^2.30.0",
+    "@google/generative-ai": "^0.24.1",
     "@prisma/composer": "0.28.0",
     "@prisma/composer-prisma-cloud": "0.28.0",
     "@prisma/orm-postgres": "8.0.0-rc.16",
@@ -47,6 +49,7 @@
     "nodemailer": "^10.1.7",
     "redis": "^6.3.0",
     "temporal-polyfill": "^1.0.5",
+    "tsup": "^9.0.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {

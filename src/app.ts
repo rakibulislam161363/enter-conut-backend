@@ -10,6 +10,7 @@ import { CustomerRoutes } from "./modules/customer/customer.route";
 import { InvoiceRoutes } from "./modules/invoice/invoice.route";
 import { TransactionRoutes } from "./modules/transactions/transaction.route";
 import { DashboardRoutes } from "./modules/dashboard/dashboard.route";
+import { ChatRoutes } from "./modules/chat/chat.route";
 
 const app: Application = express();
 
@@ -34,7 +35,8 @@ app.use("/api/product", ProductRoutes);
 app.use("/api/customer", CustomerRoutes);
 app.use("/api/invoice", InvoiceRoutes);
 app.use("/api/transaction", TransactionRoutes);
-app.use("/api/dashboard", DashboardRoutes)
+app.use("/api/dashboard", DashboardRoutes);
+app.use("/api/chat", ChatRoutes);
 app.use(notFound);
 app.use(globalErrorHandler);
 
