@@ -25,7 +25,6 @@ export type UserStatus = "ACTIVE" | "INACTIVE";
 const register = async (payload: IRegisterUserPayload) => {
 	const { fullName, password, companyName } = payload;
 	const email = payload.email.trim().toLowerCase();
-
 	const isUserExists = await db.orm.public.User
 		.where({ email })
 		.first();
@@ -34,55 +33,81 @@ const register = async (payload: IRegisterUserPayload) => {
 		throw new AppError(httpStatus.CONFLICT, "User with this email already exists");
 	}
 
+
 	const hashedPassword = await bcrypt.hash(password, 8);
-	const expirationSeconds = 5 * 60;
 
-	// --- register ফাংশনের ভেতর ওটিপি সেভ করার অংশটি এভাবে পরিবর্তন করুন ---
-const otpKey = `user-registration-otp:${email}`;
-const otpValue = crypto.randomInt(100000, 1000000).toString();
-
-// এক্সপায়রি টাইম সরাসরি EX হিসেবে পাস করে দেখুন (লাইব্রেরি ভেদে এটি সঠিক ফরমেট)
-await redisClient.set(otpKey, otpValue, {
-	EX: expirationSeconds, // অথবা আপনার আগের মেথড যদি কাজ করে থাকে
-});
-
-const userRegistrationKey = `user-registration-data:${email}`;
-const redisUserDataPayload = {
-	fullName,
-	email,
-	companyName: companyName || null, 
-	passwordHash: hashedPassword,
-};
-
-await redisClient.set(
-	userRegistrationKey,
-	JSON.stringify(redisUserDataPayload),
-	{
-		EX: expirationSeconds,
-	},
-);
-
-	const tempatePath = path.join(
-		process.cwd(),
-		"src/templates/registration-user-otp.ejs",
-	);
-
-	const templateData = {
-		name: fullName,
+	
+	const newUser = await db.orm.public.User.create({
+		fullName,
 		email,
-		otp: otpValue,
-		expirationMinutes: expirationSeconds / 60,
-	};
-
-	const html = await ejs.renderFile(tempatePath, templateData);
-
-	await transporter.sendMail({
-		from: config.email_sender,
-		to: email,
-		subject: "Email Verification",
-		html,
+		companyName: companyName || null,
+		passwordHash: hashedPassword,
 	});
+
+	return newUser;
 };
+
+// const register = async (payload: IRegisterUserPayload) => {
+// 	const { fullName, password, companyName } = payload;
+// 	const email = payload.email.trim().toLowerCase();
+
+// 	const isUserExists = await db.orm.public.User
+// 		.where({ email })
+// 		.first();
+
+// 	if (isUserExists) {
+// 		throw new AppError(httpStatus.CONFLICT, "User with this email already exists");
+// 	}
+
+// 	const hashedPassword = await bcrypt.hash(password, 8);
+// 	const expirationSeconds = 5 * 60;
+
+// 	// --- register ফাংশনের ভেতর ওটিপি সেভ করার অংশটি এভাবে পরিবর্তন করুন ---
+// const otpKey = `user-registration-otp:${email}`;
+// const otpValue = crypto.randomInt(100000, 1000000).toString();
+
+// // এক্সপায়রি টাইম সরাসরি EX হিসেবে পাস করে দেখুন (লাইব্রেরি ভেদে এটি সঠিক ফরমেট)
+// await redisClient.set(otpKey, otpValue, {
+// 	EX: expirationSeconds, // অথবা আপনার আগের মেথড যদি কাজ করে থাকে
+// });
+
+// const userRegistrationKey = `user-registration-data:${email}`;
+// const redisUserDataPayload = {
+// 	fullName,
+// 	email,
+// 	companyName: companyName || null, 
+// 	passwordHash: hashedPassword,
+// };
+
+// await redisClient.set(
+// 	userRegistrationKey,
+// 	JSON.stringify(redisUserDataPayload),
+// 	{
+// 		EX: expirationSeconds,
+// 	},
+// );
+
+// 	const tempatePath = path.join(
+// 		process.cwd(),
+// 		"src/templates/registration-user-otp.ejs",
+// 	);
+
+// 	const templateData = {
+// 		name: fullName,
+// 		email,
+// 		otp: otpValue,
+// 		expirationMinutes: expirationSeconds / 60,
+// 	};
+
+// 	const html = await ejs.renderFile(tempatePath, templateData);
+
+// 	await transporter.sendMail({
+// 		from: config.email_sender,
+// 		to: email,
+// 		subject: "Email Verification",
+// 		html,
+// 	});
+// };
 
 // ✅ নতুন ইমেইল ভেরিফিকেশন সিস্টেম (verifyEmail) যোগ করা হলো
 const verifyEmail = async (payload: { email: string; otp: string }) => {
