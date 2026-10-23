@@ -9,15 +9,29 @@ import { AuthService } from "./auth.service";
 const register = catchAsync(async (req: Request, res: Response) => {
 	const payload = req.body;
 
-	await AuthService.register(payload); 
+	
+	const result = await AuthService.register(payload); 
 
 	sendResponse(res, {
 		statusCode: httpStatus.CREATED,
 		success: true,
-		message: "Verification OTP Sent to your email",
-		data: null,
+		message: "User created successfully", 
+		data: result, 
 	});
 });
+
+// const register = catchAsync(async (req: Request, res: Response) => {
+// 	const payload = req.body;
+
+// 	await AuthService.register(payload); 
+
+// 	sendResponse(res, {
+// 		statusCode: httpStatus.CREATED,
+// 		success: true,
+// 		message: "Verification OTP Sent to your email",
+// 		data: null,
+// 	});
+// });
 
 // ✅ নতুন সাধারণ ইমেইল ভেরিফিকেশন কন্ট্রোলার যোগ করা হয়েছে
 const verifyEmail = catchAsync(async (req: Request, res: Response) => {
