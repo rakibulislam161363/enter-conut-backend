@@ -233,8 +233,16 @@ const loginUser = async (payload: ILoginUserPayload) => {
 };
 
 const getMe = async (user: IRequestUser) => {
+	// 1. Convert to number and check if it's a valid integer
+	const userId = Number(user?.userId);
+
+	if (isNaN(userId)) {
+		throw new AppError(httpStatus.BAD_REQUEST, "Invalid or missing User ID");
+	}
+
+	// 2. Run the query with the validated number
 	const isUserExists = await db.orm.public.User
-		.where({ id: Number(user.userId) })
+		.where({ id: userId })
 		.select("id", "fullName", "companyName", "email", "role", "status", "createdAt")
 		.first();
 
@@ -244,6 +252,7 @@ const getMe = async (user: IRequestUser) => {
 
 	return isUserExists;
 };
+
 
 const logoutUser = async () => {
 	return { message: "Logged out successfully" };
