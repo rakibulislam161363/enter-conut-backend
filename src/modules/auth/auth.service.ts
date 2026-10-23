@@ -232,15 +232,16 @@ const loginUser = async (payload: ILoginUserPayload) => {
 	};
 };
 
-const getMe = async (user: IRequestUser) => {
-	// 1. Convert to number and check if it's a valid integer
-	const userId = Number(user?.userId);
+const getMe = async (user: any) => {
+	// 1. auth.ts-এ যেহেতু 'id' সেট করা হয়েছে, তাই এখানে সরাসরি user.id নেওয়া হলো
+	const userId = Number(user?.id);
 
+	// 2. আইডি ভ্যালিড কিনা চেক (NaN প্রোটেকশন)
 	if (isNaN(userId)) {
 		throw new AppError(httpStatus.BAD_REQUEST, "Invalid or missing User ID");
 	}
 
-	// 2. Run the query with the validated number
+	// 3. ডাটাবেজ কুয়েরি
 	const isUserExists = await db.orm.public.User
 		.where({ id: userId })
 		.select("id", "fullName", "companyName", "email", "role", "status", "createdAt")
@@ -252,6 +253,7 @@ const getMe = async (user: IRequestUser) => {
 
 	return isUserExists;
 };
+
 
 
 const logoutUser = async () => {
