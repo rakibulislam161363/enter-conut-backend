@@ -6,7 +6,6 @@ import { ChatService } from "./chat.service";
 
 const handleChat = catchAsync(async (req: Request, res: Response) => {
 	const { message } = req.body;
-
 	if (!message) {
 		sendResponse(res, {
 			statusCode: httpStatus.BAD_REQUEST,
